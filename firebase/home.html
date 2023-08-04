@@ -17,7 +17,52 @@
 </head>
 
 <body onload="verificaLogado()">
-    <h1>Home</h1>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">Fatec Votorantim</a>
+            <div class="ms-auto">
+                <div id="imagemUsuario">
+                    <button class="btn btn-danger" type="button" onclick="logoutFirebase()">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <br>
+    <div class="container-flex">
+        <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-6">
+                <form action="" id="formCadastro" class="was-validated" method="post">
+                    <h4 class="text-danger">
+                        Cadastro de convênios
+                    </h4>
+                    <div class="mb-3">
+                        <label for="razao" class="form-label">Razão Social</label>
+                        <input type="text" class="form-control" id="razao" name="razao" placeholder="Razão Social" autofocus required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="cep" class="form-label">CEP</label>
+                        <input type="text" class="form-control" id="cep" name="cep" title="Informe o CEP (sem pontos ou traços)" max-lenght="8" pattern="[0-9]{8}" required>
+                        <div class="invalid-feedback" id="cepFeedback">CEP Inválido! Informe somente números</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="endereco" class="form-label">Endereço</label>
+                        <input type="text" name="endereco" id="endereco" class="form-control" placeholder="Endereço Completo" required>
+                    </div>
+                    <div class="mb-3 row">
+                        <div class="col-md-6">
+                            <label for="lat" class="form-label">Latitude</label>
+                            <input type="number" name="lat" id="lat" class="form-control" min="-90" max="90" step="any" required placeholder="Latitude em Graus">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="long" class="form-label">Longitude</label>
+                            <input type="number" name="long" id="long" class="form-control" min="-180" max="180" step="any" required placeholder="Longitude em Graus">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <!-- Carregando os scripts do Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-app-compat.js"></script>
@@ -26,5 +71,42 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-storage-compat.js"></script>
     <!-- script do projeto -->
     <script src="js/firebase.js"></script>
+    <script src="js/util.js"></script>
+    <script>
+        //obtendo a referência aos campos
+        const cepInput = document.getElementById('cep')
+        const endInput = document.getElementById('endereco')
+        const latInput = document.getElementById('lat')
+        const longInput = document.getElementById('long')
+        //evento de escuta no endereco
+        endInput.addEventListener('blur', function(){
+            const enderecoValue = endInput.value
+
+            getLatLong(enderecoValue, (erro, latitude, longitude) => {
+                if(erro){alert(erro)}
+                else{
+                    latInput.value = latitude
+                    longInput.value = longitude
+                }
+            })
+        })
+
+        //adicionando o evento de escuta no cep
+        cepInput.addEventListener('blur', function(){
+            //Obtendo o valor digitado
+            const cepValue = cepInput.value
+            const cepPattern = cepInput.getAttribute('pattern')
+            //Verifica o padrão
+            if(cepValue.match(new RegExp(cepPattern))){
+                getCEP(cepValue, (erro, logradouro)=>{
+                    if(erro){
+                        alert(erro)
+                    } else{endInput.value = logradouro}
+                })
+            } else{
+                alert('Cep inválido. Fora do padrão ' + cepPattern)
+            }
+        })
+    </script>
 </body>
 </html>

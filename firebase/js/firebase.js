@@ -28,9 +28,24 @@ function verificaLogado(){
         if(user){
             //É salvo o id do user localmente
             localStorage.setItem('usuarioId', user.uid)
+            //Inserindo a imagem do usuário
+            console.log(user)
+            let imagem = document.getElementById('imagemUsuario')
+            user.photoURL ? imagem.innerHTML += `<img src="${user.photoURL}" alt="Foto do usuário" title="${user.displayName}" class="img rounded-circle" width="48" />`
+            : `<img src="images/logo-google.svg" class="img rounded-circle" width="48" />`
         } else{
             console.error('Usuário não logado!')
             window.location.href = `${urlApp}/`
         }
+    })
+}
+
+function logoutFirebase(){
+    firebase.auth().signOut().then(function(){
+        localStorage.removeItem('usuarioId')
+        window.location.href= `${urlApp}/`
+    })
+    .catch(function(error){
+        alert(`Não foi possível fazer o logout: ${error.message}`)
     })
 }
