@@ -7,3 +7,10 @@
     justify-content: center;
     background: linear-gradient(to right, #B20000, #4A565C);
 }
+
+#map{
+    height: 80vh;
+    width: 48vw;
+    border: solid 1px black;
+    
+}
